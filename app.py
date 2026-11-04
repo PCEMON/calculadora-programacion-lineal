@@ -24,6 +24,12 @@ import streamlit as st
 import io
 from contextlib import redirect_stdout
 
+st.set_page_config(
+    page_title="Calculadora de programación lineal",
+    page_icon="📈",
+    layout="wide"
+)
+
 TOL = 1e-8
 
 
@@ -1245,20 +1251,10 @@ def resolver():
 
 
 # ================================================================
-# 10. EJECUCIÓN
-# ================================================================
-
-resolver()
-
-# ================================================================
 # INTERFAZ WEB CON STREAMLIT
 # ================================================================
 
-st.set_page_config(
-    page_title="Calculadora de programación lineal",
-    page_icon="📈",
-    layout="wide"
-)
+
 
 st.title("📈 Calculadora de programación lineal")
 st.caption("Matemáticas Aplicadas a las CCSS II · 2.º Bachillerato")
