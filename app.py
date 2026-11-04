@@ -37,9 +37,9 @@ TOL = 1e-8
 # DISEÑO VISUAL DE LA APLICACIÓN
 # ================================================================
 
+
 st.markdown("""
 <style>
-
 /* Fondo general */
 .stApp {
     background-color: #F5F7FB;
@@ -91,9 +91,9 @@ div[data-baseweb="input"] {
 hr {
     border-color: #DCE4EF;
 }
-
 </style>
-""")
+""", unsafe_allow_html=True)
+
 
 
 # ================================================================
