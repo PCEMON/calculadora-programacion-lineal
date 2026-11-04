@@ -1344,27 +1344,6 @@ st.info(
     "la solución óptima y el procedimiento explicado."
 )
 
-### Paso 3. Guardar y comprobar
-
-1. Pulsa **Commit changes** en GitHub.
-2. Espera a que Streamlit actualice la aplicación.
-3. Abre el enlace de tu calculadora.
-
-De momento no modificamos nada más. Así podremos comprobar que el diseño nuevo funciona antes de seguir.
-
----
-
-## Lo que haremos después
-
-Quiero mejorar especialmente el procedimiento didáctico para que aparezca organizado en cinco apartados desplegables:
-
-1. Planteamiento del problema.
-2. Tablas y representación de las restricciones.
-3. Cálculo de los vértices.
-4. Evaluación de la función objetivo.
-5. Conclusión e interpretación del resultado.
-
-También podremos incorporar explicaciones matemáticas y no solamente los resultados numéricos.
 
 
 # Número de restricciones fuera del formulario para que la interfaz
