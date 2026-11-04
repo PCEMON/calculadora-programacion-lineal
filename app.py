@@ -1343,7 +1343,6 @@ st.info(
     "Obtendrás la región factible, los vértices, "
     "la solución óptima y el procedimiento explicado."
 )
-```
 
 ### Paso 3. Guardar y comprobar
 
