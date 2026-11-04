@@ -34,6 +34,69 @@ TOL = 1e-8
 
 
 # ================================================================
+# DISEÑO VISUAL DE LA APLICACIÓN
+# ================================================================
+
+st.markdown("""
+<style>
+
+/* Fondo general */
+.stApp {
+    background-color: #F5F7FB;
+}
+
+/* Títulos */
+h1, h2, h3 {
+    color: #23436B;
+}
+
+/* Texto general */
+p, label {
+    color: #34445A;
+}
+
+/* Contenedores */
+div[data-testid="stForm"] {
+    background-color: white;
+    padding: 25px;
+    border-radius: 14px;
+    border: 1px solid #E0E7F0;
+}
+
+/* Botones */
+.stButton > button,
+.stFormSubmitButton > button {
+    background-color: #315B91;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    padding: 10px 20px;
+}
+
+/* Botón al pasar el ratón */
+.stButton > button:hover,
+.stFormSubmitButton > button:hover {
+    background-color: #23436B;
+    color: white;
+    border: none;
+}
+
+/* Campos de entrada */
+div[data-baseweb="input"] {
+    border-radius: 8px;
+}
+
+/* Separadores */
+hr {
+    border-color: #DCE4EF;
+}
+
+</style>
+""")
+
+
+# ================================================================
 # 1. INTRODUCCIÓN DE DATOS
 # ================================================================
 
@@ -1256,14 +1319,56 @@ def resolver():
 
 
 
-st.title("📈 Calculadora de programación lineal")
-st.caption("Matemáticas Aplicadas a las CCSS II · 2.º Bachillerato")
+st.markdown("""
+<div style="
+    background: linear-gradient(120deg, #23436B, #477DB8);
+    padding: 30px;
+    border-radius: 16px;
+    margin-bottom: 25px;
+">
+    <h1 style="color:white; margin-bottom:5px;">
+        📈 Programación lineal
+    </h1>
+    <h3 style="color:#E4EEFA; font-weight:normal;">
+        Matemáticas Aplicadas a las CCSS II
+    </h3>
+    <p style="color:white; margin-bottom:0;">
+        2.º de Bachillerato · Calculadora interactiva
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
-st.markdown(
-    "Introduce la función objetivo y las restricciones. "
-    "La calculadora mostrará el procedimiento, los vértices "
-    "y la representación gráfica."
+st.info(
+    "Introduce la función objetivo y sus restricciones. "
+    "Obtendrás la región factible, los vértices, "
+    "la solución óptima y el procedimiento explicado."
 )
+```
+
+### Paso 3. Guardar y comprobar
+
+1. Pulsa **Commit changes** en GitHub.
+2. Espera a que Streamlit actualice la aplicación.
+3. Abre el enlace de tu calculadora.
+
+De momento no modificamos nada más. Así podremos comprobar que el diseño nuevo funciona antes de seguir.
+
+---
+
+## Lo que haremos después
+
+Quiero mejorar especialmente el procedimiento didáctico para que aparezca organizado en cinco apartados desplegables:
+
+1. Planteamiento del problema.
+2. Tablas y representación de las restricciones.
+3. Cálculo de los vértices.
+4. Evaluación de la función objetivo.
+5. Conclusión e interpretación del resultado.
+
+También podremos incorporar explicaciones matemáticas y no solamente los resultados numéricos.
+
+**Haz primero estos dos cambios y dime cómo se ve la aplicación.** Después nos ocuparemos del procedimiento paso a paso, que es la parte más interesante desde el punto de vista educativo. 😊
+
 
 # Número de restricciones fuera del formulario para que la interfaz
 # pueda actualizar el número de filas al cambiar este selector.
