@@ -1367,8 +1367,6 @@ Quiero mejorar especialmente el procedimiento didáctico para que aparezca organ
 
 También podremos incorporar explicaciones matemáticas y no solamente los resultados numéricos.
 
-**Haz primero estos dos cambios y dime cómo se ve la aplicación.** Después nos ocuparemos del procedimiento paso a paso, que es la parte más interesante desde el punto de vista educativo. 😊
-
 
 # Número de restricciones fuera del formulario para que la interfaz
 # pueda actualizar el número de filas al cambiar este selector.
