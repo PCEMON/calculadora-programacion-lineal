@@ -40,22 +40,18 @@ TOL = 1e-8
 
 st.markdown("""
 <style>
-/* Fondo general */
 .stApp {
     background-color: #F5F7FB;
 }
 
-/* Títulos */
 h1, h2, h3 {
     color: #23436B;
 }
 
-/* Texto general */
 p, label {
     color: #34445A;
 }
 
-/* Contenedores */
 div[data-testid="stForm"] {
     background-color: white;
     padding: 25px;
@@ -63,23 +59,27 @@ div[data-testid="stForm"] {
     border: 1px solid #E0E7F0;
 }
 
-/* Botones */
+/* Botones: fondo azul y texto blanco */
 .stButton > button,
 .stFormSubmitButton > button {
-    background-color: #315B91;
-    color: white;
+    background-color: #315B91 !important;
+    color: white !important;
     border-radius: 10px;
-    border: none;
+    border: none !important;
     font-weight: bold;
     padding: 10px 20px;
 }
 
-/* Botón al pasar el ratón */
+/* Fuerza el color blanco también en el texto interior */
+.stButton > button *,
+.stFormSubmitButton > button * {
+    color: white !important;
+}
+
 .stButton > button:hover,
 .stFormSubmitButton > button:hover {
-    background-color: #23436B;
-    color: white;
-    border: none;
+    background-color: #23436B !important;
+    color: white !important;
 }
 
 /* Campos de entrada */
@@ -87,7 +87,23 @@ div[data-baseweb="input"] {
     border-radius: 8px;
 }
 
-/* Separadores */
+/* En móviles, las columnas se colocan una debajo de otra */
+@media (max-width: 640px) {
+    div[data-testid="stHorizontalBlock"] {
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+
+    div[data-testid="stHorizontalBlock"] > div {
+        flex: 1 1 100% !important;
+        min-width: 100% !important;
+    }
+
+    div[data-testid="stForm"] {
+        padding: 15px;
+    }
+}
+
 hr {
     border-color: #DCE4EF;
 }
@@ -1313,11 +1329,10 @@ def resolver():
     )
 
 
+
 # ================================================================
 # INTERFAZ WEB CON STREAMLIT
 # ================================================================
-
-
 
 st.markdown("""
 <div style="
@@ -1344,56 +1359,97 @@ st.info(
     "la solución óptima y el procedimiento explicado."
 )
 
+# Número de restricciones en un espacio más compacto.
+col_num, col_vacio = st.columns([1, 3])
 
-
-# Número de restricciones fuera del formulario para que la interfaz
-# pueda actualizar el número de filas al cambiar este selector.
-n_restricciones = st.number_input(
-    "Número de restricciones",
-    min_value=0,
-    max_value=15,
-    value=3,
-    step=1
-)
+with col_num:
+    n_restricciones = st.number_input(
+        "Número de restricciones",
+        min_value=0,
+        max_value=15,
+        value=3,
+        step=1
+    )
 
 with st.form("formulario_problema"):
+
     st.subheader("1. Función objetivo")
-    col1, col2, col3 = st.columns([2, 1, 2])
-    with col1:
-        coef_x = st.number_input("Coeficiente de x", value=3.0, key="coef_x")
-    with col2:
-        tipo_opt = st.selectbox("Optimizar", ["Máximo", "Mínimo"])
-    with col3:
-        coef_y = st.number_input("Coeficiente de y", value=2.0, key="coef_y")
+
+    # Los dos coeficientes juntos y el tipo de optimización a la derecha.
+    col_x, col_y, col_tipo = st.columns([1, 1, 1.2])
+
+    with col_x:
+        coef_x = st.number_input(
+            "Coeficiente de x",
+            value=3.0,
+            step=1.0,
+            format="%g",
+            key="coef_x"
+        )
+
+    with col_y:
+        coef_y = st.number_input(
+            "Coeficiente de y",
+            value=2.0,
+            step=1.0,
+            format="%g",
+            key="coef_y"
+        )
+
+    with col_tipo:
+        tipo_opt = st.selectbox(
+            "Optimizar",
+            ["Máximo", "Mínimo"]
+        )
 
     st.subheader("2. Restricciones")
+
     restricciones_form = []
     signos = ["<=", "<", ">=", ">", "="]
 
     for i in range(int(n_restricciones)):
+
         st.markdown(f"**Restricción {i+1}**")
-        c1, c2, c3, c4 = st.columns([2, 2, 1, 2])
+
+        c1, c2, c3, c4 = st.columns([1, 1, 0.8, 1])
+
         with c1:
             aa = st.number_input(
-                f"Coeficiente de x · R{i+1}",
-                value=1.0, key=f"ra_{i}"
+                "Coeficiente de x",
+                value=1.0,
+                step=1.0,
+                format="%g",
+                key=f"ra_{i}"
             )
+
         with c2:
             bb = st.number_input(
-                f"Coeficiente de y · R{i+1}",
-                value=1.0, key=f"rb_{i}"
+                "Coeficiente de y",
+                value=1.0,
+                step=1.0,
+                format="%g",
+                key=f"rb_{i}"
             )
+
         with c3:
             ss = st.selectbox(
-                f"Signo · R{i+1}",
-                signos, key=f"rs_{i}"
+                "Signo",
+                signos,
+                key=f"rs_{i}"
             )
+
         with c4:
             cc = st.number_input(
-                f"Término independiente · R{i+1}",
-                value=10.0, key=f"rc_{i}"
+                "Término independiente",
+                value=10.0,
+                step=1.0,
+                format="%g",
+                key=f"rc_{i}"
             )
-        restricciones_form.append((float(aa), float(bb), ss, float(cc)))
+
+        restricciones_form.append(
+            (float(aa), float(bb), ss, float(cc))
+        )
 
     enviar = st.form_submit_button(
         "Calcular solución",
@@ -1402,8 +1458,16 @@ with st.form("formulario_problema"):
     )
 
 if enviar:
-    st.session_state["objetivo"] = [float(coef_x), float(coef_y)]
-    st.session_state["maximizar"] = (tipo_opt == "Máximo")
+
+    st.session_state["objetivo"] = [
+        float(coef_x),
+        float(coef_y)
+    ]
+
+    st.session_state["maximizar"] = (
+        tipo_opt == "Máximo"
+    )
+
     st.session_state["restricciones"] = restricciones_form
 
     st.divider()
@@ -1422,19 +1486,32 @@ if enviar:
         plt.close(plt.gcf())
 
     plt.show = mostrar_grafica
+
     try:
         with st.spinner("Resolviendo el problema..."):
             with redirect_stdout(salida):
                 resolver()
+
     except Exception as error:
-        st.error(f"Se ha producido un error al resolver el problema: {error}")
+        st.error(
+            f"Se ha producido un error al resolver el problema: {error}"
+        )
+
     finally:
         plt.show = plt_show_original
 
     texto = salida.getvalue()
+
     if texto.strip():
-        with st.expander("Ver procedimiento y explicación paso a paso", expanded=True):
+        with st.expander(
+            "Ver procedimiento y explicación paso a paso",
+            expanded=True
+        ):
             st.text(texto)
 
 else:
-    st.info("Completa los datos y pulsa «Calcular solución» para obtener los resultados.")
+    st.info(
+        "Completa los datos y pulsa «Calcular solución» "
+        "para obtener los resultados."
+    )
+
