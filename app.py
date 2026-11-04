@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
+import html
 from scipy.optimize import linprog
 
 
@@ -28,33 +29,96 @@ TOL = 1e-8
 
 st.markdown("""
 <style>
+
+/* Fondo general y texto */
 .stApp {
-    background-color: #F5F7FB;
+    background-color: #F4F7FB;
+    color: #243247;
 }
 
-h1, h2, h3 {
-    color: #23436B;
+/* Títulos y encabezados */
+.stApp h1,
+.stApp h2,
+.stApp h3,
+.stApp [data-testid="stMarkdownContainer"] h1,
+.stApp [data-testid="stMarkdownContainer"] h2,
+.stApp [data-testid="stMarkdownContainer"] h3 {
+    color: #17365D !important;
+    font-weight: 700 !important;
 }
 
+/* Etiquetas de los campos */
+.stApp label,
+.stApp [data-testid="stWidgetLabel"],
+.stApp [data-testid="stWidgetLabel"] p,
+.stApp [data-testid="stMarkdownContainer"] p {
+    color: #26384D !important;
+}
+
+/* Formularios */
 div[data-testid="stForm"] {
-    background-color: white;
-    padding: 22px;
+    background-color: #FFFFFF;
+    padding: 24px;
     border-radius: 14px;
-    border: 1px solid #E0E7F0;
+    border: 1px solid #D6E0EC;
+    box-shadow: 0 2px 8px rgba(30, 55, 85, 0.05);
 }
 
+/* Campos de entrada */
+.stApp input,
+.stApp textarea {
+    color: #1F2937 !important;
+}
+
+/* Botón de calcular */
 .stFormSubmitButton > button {
     background-color: #315B91 !important;
-    color: white !important;
+    color: #FFFFFF !important;
     border-radius: 10px;
     border: none !important;
     font-weight: bold;
+    min-height: 44px;
 }
 
 .stFormSubmitButton > button * {
-    color: white !important;
+    color: #FFFFFF !important;
 }
 
+/* Desplegable del procedimiento */
+div[data-testid="stExpander"] {
+    background-color: #FFFFFF;
+    border: 1px solid #CCD9E8;
+    border-radius: 12px;
+}
+
+div[data-testid="stExpander"] summary,
+div[data-testid="stExpander"] summary p {
+    color: #17365D !important;
+    font-weight: 700 !important;
+}
+
+/* Recuadro del procedimiento */
+.procedimiento {
+    background-color: #FFFFFF;
+    color: #243247;
+    border: 1px solid #D6E0EC;
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.procedimiento pre {
+    color: #243247 !important;
+    background-color: #FFFFFF !important;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    margin: 0;
+}
+
+/* Adaptación a móviles */
 @media (max-width: 640px) {
     div[data-testid="stHorizontalBlock"] {
         flex-wrap: wrap !important;
@@ -69,10 +133,18 @@ div[data-testid="stForm"] {
     div[data-testid="stForm"] {
         padding: 14px;
     }
+
+    .procedimiento {
+        padding: 12px;
+    }
+
+    .procedimiento pre {
+        font-size: 12px;
+    }
 }
+
 </style>
 """, unsafe_allow_html=True)
-
 
 # ================================================================
 # FUNCIONES AUXILIARES
@@ -806,59 +878,86 @@ def resolver(objetivo, maximizar, restricciones):
     vertices = obtener_vertices_cierre(restricciones)
     mostrar_procedimiento_vertices(restricciones, vertices)
 
-    if vertices:
-        print("\nListado de vértices del cierre de la región:")
+    # Dos columnas: una tabla de vértices y otra de valores de Z.
+    col_vertices, col_objetivo = st.columns(2, gap="large")
 
-        filas = []
+    # ------------------------------------------------------------
+    # TABLA 1: VÉRTICES
+    # ------------------------------------------------------------
 
-        for i, p in enumerate(vertices, 1):
-            incluido = satisface_reales(p, restricciones)
+    with col_vertices:
 
-            filas.append({
-                "Vértice": nombre_vertice(i),
-                "x": p[0],
-                "y": p[1],
-                "¿Pertenece?": (
-                    "Incluido" if incluido
-                    else "Excluido (frontera estricta)"
-                )
-            })
+        st.markdown("### Vértices")
 
-        display(pd.DataFrame(filas).style.format({
-            "x": "{:.5g}",
-            "y": "{:.5g}"
-        }))
-    else:
-        print("No se han encontrado vértices.")
+        if vertices:
+
+            print("\nListado de vértices del cierre de la región:")
+
+            filas = []
+
+            for i, p in enumerate(vertices, 1):
+
+                incluido = satisface_reales(p, restricciones)
+
+                filas.append({
+                    "Vértice": nombre_vertice(i),
+                    "x": p[0],
+                    "y": p[1],
+                    "¿Pertenece?": (
+                        "Incluido" if incluido
+                        else "Excluido (frontera estricta)"
+                    )
+                })
+
+            display(pd.DataFrame(filas).style.format({
+                "x": "{:.5g}",
+                "y": "{:.5g}"
+            }))
+
+        else:
+
+            print("No se han encontrado vértices.")
+            st.info("No se han encontrado vértices.")
+
+    # ------------------------------------------------------------
+    # TABLA 2: FUNCIÓN OBJETIVO
+    # ------------------------------------------------------------
 
     print("\n" + "="*72)
     print("4. TABLA DE LA FUNCIÓN OBJETIVO")
     print("="*72)
 
-    if vertices:
-        datos = []
+    with col_objetivo:
 
-        for i, p in enumerate(vertices, 1):
-            datos.append({
-                "Vértice": nombre_vertice(i),
-                "x": p[0],
-                "y": p[1],
-                "Z = a·x + b·y": float(objetivo @ p),
-                "Punto admisible": (
-                    "Sí" if satisface_reales(p, restricciones)
-                    else "No"
-                )
-            })
+        st.markdown("### Valores de la función objetivo")
 
-        display(pd.DataFrame(datos).style.format({
-            "x": "{:.5g}",
-            "y": "{:.5g}",
-            "Z = a·x + b·y": "{:.5g}"
-        }))
-    else:
-        print("No hay vértices que incluir en la tabla.")
+        if vertices:
 
-    print("\n" + "="*72)
+            datos = []
+
+            for i, p in enumerate(vertices, 1):
+
+                datos.append({
+                    "Vértice": nombre_vertice(i),
+                    "x": p[0],
+                    "y": p[1],
+                    "Z = a·x + b·y": float(objetivo @ p),
+                    "Punto admisible": (
+                        "Sí" if satisface_reales(p, restricciones)
+                        else "No"
+                    )
+                })
+
+            display(pd.DataFrame(datos).style.format({
+                "x": "{:.5g}",
+                "y": "{:.5g}",
+                "Z = a·x + b·y": "{:.5g}"
+            }))
+
+        else:
+
+            print("No hay vértices que incluir en la tabla.")
+            st.info("No hay vértices que incluir en la tabla.")
     print("5. OPTIMIZACIÓN Y CONCLUSIÓN")
     print("="*72)
 
@@ -1152,16 +1251,19 @@ else:
     st.divider()
     st.header("Resultados")
 
-    # Esta función muestra las tablas en tres columnas.
+    # Muestra las tablas sin dividir las tablas de resultados.
     def display(obj):
 
-        # Tablas de puntos: una tabla por restricción.
+        # Tablas de puntos para dibujar las rectas.
+        # Se mantienen en tres columnas.
         if isinstance(obj, list):
 
             columnas = st.columns(3)
 
             for i, (titulo, tabla) in enumerate(obj):
+
                 with columnas[i % 3]:
+
                     st.markdown(f"**{titulo}**")
 
                     st.dataframe(
@@ -1173,21 +1275,12 @@ else:
             return
 
         # Tablas de vértices y función objetivo.
-        df = obj.data if hasattr(obj, "data") else obj
-
-        bloques = np.array_split(df, 3)
-        columnas = st.columns(3)
-
-        for columna, bloque in zip(columnas, bloques):
-
-            if len(bloque) > 0:
-                with columna:
-                    st.dataframe(
-                        pd.DataFrame(bloque, columns=df.columns),
-                        use_container_width=True,
-                        hide_index=True
-                    )
-                    
+        # Se muestran completas, sin trocearlas.
+        st.dataframe(
+            obj,
+            use_container_width=True,
+            hide_index=True
+        )                    
     # Capturamos el procedimiento para mostrarlo en el desplegable.
     salida = io.StringIO()
 
@@ -1210,8 +1303,16 @@ else:
 
     if texto_procedimiento.strip():
 
-        with st.expander(
-            "📖 Ver procedimiento y explicación paso a paso",
-            expanded=False
-        ):
-            st.text(texto_procedimiento)
+    with st.expander(
+        "📖 VER PROCEDIMIENTO Y EXPLICACIÓN PASO A PASO",
+        expanded=False
+    ):
+
+        st.markdown(
+            f"""
+            <div class="procedimiento">
+                <pre>{html.escape(texto_procedimiento)}</pre>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
