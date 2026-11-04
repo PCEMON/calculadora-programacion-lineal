@@ -1180,14 +1180,14 @@ else:
 
         for columna, bloque in zip(columnas, bloques):
 
-            if not bloque.empty:
+            if len(bloque) > 0:
                 with columna:
                     st.dataframe(
-                        bloque,
+                        pd.DataFrame(bloque, columns=df.columns),
                         use_container_width=True,
                         hide_index=True
                     )
-
+                    
     # Capturamos el procedimiento para mostrarlo en el desplegable.
     salida = io.StringIO()
 
