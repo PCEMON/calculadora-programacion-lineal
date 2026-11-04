@@ -1302,12 +1302,10 @@ else:
     texto_procedimiento = salida.getvalue()
 
     if texto_procedimiento.strip():
-
     with st.expander(
-        "📖 VER PROCEDIMIENTO Y EXPLICACIÓN PASO A PASO",
+        "📘 Ver procedimiento paso a paso",
         expanded=False
     ):
-
         st.markdown(
             f"""
             <div class="procedimiento">
